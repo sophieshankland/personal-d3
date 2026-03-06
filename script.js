@@ -1,7 +1,14 @@
-// Learning with YouTube video https://www.youtube.com/watch?v=C4t6qfHZ6Tw&list=PLenXHPi80PGzNWUHro_O3NzYlcIZC6rFt&index=6
+// Learning with:
+// YouTube video https://www.youtube.com/watch?v=C4t6qfHZ6Tw&list=PLenXHPi80PGzNWUHro_O3NzYlcIZC6rFt&index=6
+// Observable tutorial https://observablehq.com/@d3/lets-make-a-bar-chart
+
+// BAR CHART
 
 // Dataset being visualised, with each number representing the height of a bar
 var dataset = [50, 40, 65, 80, 35, 70, 45, 50, 90];
+
+// For loading in a CSV file.
+// d3.csvParse(await FileAttachment("numbers.csv").text(), d3.autoType)
 
 // SVG dimensions
 var svgWidth = 1000, svgHeight = 500, barPadding = 5;
