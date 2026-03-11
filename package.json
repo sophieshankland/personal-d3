@@ -1,0 +1,24 @@
+{
+  "name": "personal-d3",
+  "version": "1.0.0",
+  "description": "This repository is for practicing and developing my D3 skills for the upcoming DUWIT hackathon, as well as a log of my progression for my Programming Black coursework.",
+  "homepage": "https://github.com/sophieshankland/personal-d3#readme",
+  "bugs": {
+    "url": "https://github.com/sophieshankland/personal-d3/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sophieshankland/personal-d3.git"
+  },
+  "license": "ISC",
+  "author": "sophie shankland",
+  "type": "commonjs",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon server/server.js"
+  },
+  "dependencies": {
+    "node-modules": "^1.0.1"
+  }
+}
