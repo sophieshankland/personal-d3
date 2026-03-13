@@ -75,6 +75,7 @@ d3.csv("../data/productivity.csv", d => {
         .attr("stroke", "#000000")
         .attr("stroke-width", 0.5)
 
+        // Calls interactivity to the cells.
         .on("mouseover", function (event, d) {
 
         })
@@ -105,6 +106,5 @@ d3.csv("../data/productivity.csv", d => {
       .style("font-family", "Georgia")
       .call(y_axis_g);
 
-    // Adds interactivity
 
 })
