@@ -139,7 +139,7 @@ d3.csv("../data/productivity.csv", d => {
 })
 
 function showDistribution(d) {
-  const container = d3.select("#distribution-table");
+  const container = d3.select("#distribution-chart");
   container.html("");
 
   // Sorting margins
@@ -179,12 +179,18 @@ function showDistribution(d) {
     .enter()
     .append("rect")
     .attr("x", (v, i) => x(i + 1))
-    .attr("y", v => y(v))
+    .attr("y", y(0))
     .attr("width", x.bandwidth())
-    .attr("height", v => innerHeight - y(v))
+    .attr("height", 0)
     .attr("fill", (v, i) => barColor(i + 1))
     .attr("stroke", "#333")
-    .attr("stroke-width", 0.5);
+    .attr("stroke-width", 0.5)
+    .transition()
+    .duration(900)
+    .ease(d3.easeCubicOut)
+    .attr("y", v => y(v))                
+    .attr("height", v => innerHeight - y(v));
+
 
   // Moves along for next bar
   g.append("g")
