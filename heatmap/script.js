@@ -22,6 +22,11 @@ const tooltip = d3.select("body")
     .attr("class","tooltip")
     .style("opacity",0);
 
+// Creates a hover layer so that the text always shows over the cell
+const hoverLayer = svg.append("g")
+    .attr("class", "hover-layer")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
 // Parse the data in the CSV file to be made into the heatmap.
 d3.csv("../data/productivity.csv", d => {
     // Makes an array of the frequencies for a given hour slot.
@@ -75,11 +80,35 @@ d3.csv("../data/productivity.csv", d => {
         .attr("stroke", "#000000")
         .attr("stroke-width", 0.5)
 
-        // Calls interactivity to the cells.
-        .on("mouseover", function (event, d) {
-
+        // 
+        .on("mouseover", (event, d) => {
+            // Shows the average number inside the cell
+            hoverLayer.append("text")
+                .attr("class", "hover-label")
+                .attr("x", x_axis(d.hour) + x_axis.bandwidth() / 2)
+                .attr("y", y_axis(d.day) + y_axis.bandwidth() / 2 + 4)
+                .attr("text-anchor", "middle")
+                .text(d.avg.toFixed(2))
+                .style("pointer-events", "none");
         })
 
+        .on("mousemove", (event, d) => {
+            const [mouseX, mouseY] = d3.pointer(event, svg.node());
+            tooltip
+                .style("left", (mouseX + margin.left + 10) + "px")
+                .style("top", (mouseY + margin.top - 25) + "px");
+            })
+
+        // Removing the average showing when mouse leaves the cell
+        .on("mouseout", () => {
+            tooltip.style("opacity", 0);
+            d3.selectAll(".hover-label").remove();
+            })
+
+        // When a cell is clicked on, its specific bar chart showing distribution of productivity 
+            .on("click", (event, d) => {
+            showDistribution(d);
+            });
 
     // Adds the x-axis of each hour of the day.
     const x_axis_g = g.append("g")
@@ -108,3 +137,71 @@ d3.csv("../data/productivity.csv", d => {
 
 
 })
+
+function showDistribution(d) {
+  const container = d3.select("#distribution-table");
+  container.html("");
+
+  // Sorting margins
+  const width = 400;
+  const height = 220;
+
+  const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const svg = container
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+  const x = d3.scaleBand()
+    .domain([1, 2, 3, 4, 5])
+    .range([0, innerWidth])
+    .padding(0.2);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(d.freq)])
+    .range([innerHeight, 0]);
+
+  // Sets the bar colour based on 'level' of productivity
+  const barColor = d3.scaleSequential()
+    .domain([1, 5])
+    .interpolator(d3.interpolateRgbBasis(["#d73027", "#ffde21", "#1a9850"]));
+
+  // Adds all of the bars
+  g.selectAll("rect")
+    .data(d.freq)
+    .enter()
+    .append("rect")
+    .attr("x", (v, i) => x(i + 1))
+    .attr("y", v => y(v))
+    .attr("width", x.bandwidth())
+    .attr("height", v => innerHeight - y(v))
+    .attr("fill", (v, i) => barColor(i + 1))
+    .attr("stroke", "#333")
+    .attr("stroke-width", 0.5);
+
+  // Moves along for next bar
+  g.append("g")
+    .style("font-family", "Georgia")
+    .attr("transform", `translate(0, ${innerHeight})`)
+    .call(d3.axisBottom(x));
+
+  g.append("g")
+    .style("font-family", "Georgia")
+    .call(d3.axisLeft(y).ticks(d3.max(d.freq)));
+
+  // Bar chart title text
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", margin.top / 1.5 - 5)
+    .attr("text-anchor", "middle")
+    .style("font-family", "georgia")
+    .style("font-size", "12px")
+    .text(`Productivity Levels (Day ${d.day}, Hour ${d.hour})`);
+}
