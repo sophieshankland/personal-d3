@@ -178,6 +178,7 @@ function showDistribution(d) {
     .data(d.freq)
     .enter()
     .append("rect")
+    // Sets original bar height to 0 for animation
     .attr("x", (v, i) => x(i + 1))
     .attr("y", y(0))
     .attr("width", x.bandwidth())
@@ -185,6 +186,7 @@ function showDistribution(d) {
     .attr("fill", (v, i) => barColor(i + 1))
     .attr("stroke", "#333")
     .attr("stroke-width", 0.5)
+    // Adds animation for bar height
     .transition()
     .duration(900)
     .ease(d3.easeCubicOut)
