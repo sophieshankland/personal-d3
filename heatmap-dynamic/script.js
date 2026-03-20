@@ -49,7 +49,7 @@ function createHeatmap({ container, data }) {
     .domain([1, 5])
     .interpolator(d3.interpolateRgbBasis(["#bd1708", "#ffdb26", "#66ac28"]));
 
-  // Initialises hover text 
+  // Initialises hover text that is used instead of tooltip 
   const hoverLayer = g.append("text")
     .attr("class", "hover-layer")
     .attr("font-size", "12px")
@@ -94,6 +94,9 @@ function createHeatmap({ container, data }) {
     .on("mouseout", () => {
       hoverLayer.style("opacity", 0)
     })
+    .on("click", (event, d) => {
+      createBarChart("#distribution-chart", d.freq, d);
+    })
   }
 
   // Adding axes
@@ -110,10 +113,71 @@ function createHeatmap({ container, data }) {
         .tickFormat(d => ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"][d])
     );
 
-    
-
-  // The 
+  // The initial render of the heatmap
   update("all");
+}
+
+function createBarChart(container, freq, d) {
+// Sorting size and margins and scale
+  const width = 400;
+  const height = 220;
+  const margin = { top: 20, right: 20, bottom: 40, left: 40 };
+
+  const innerWidth = width - margin.left - margin.right;
+  const innerHeight = height - margin.top - margin.bottom;
+
+  const svg = d3.select(container)
+    .html("")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+  const g = svg.append("g")
+    .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleBand()
+    .domain([1,2,3,4,5])
+    .range([0, innerWidth])
+    .padding(0.2);
+
+  const y = d3.scaleLinear()
+    .domain([0, d3.max(freq)])
+    .nice()
+    .range([innerHeight, 0]);
+
+// Setting bar colour
+  const colorScale = d3.scaleSequential()
+    .domain([1,5])
+    .interpolator(d3.interpolateRgbBasis(["#d73027", "#ffde21", "#1a9850"]));
+
+    // Creating bars and adds animation
+  g.selectAll("rect")
+    .data(freq)
+    .join("rect")
+    .attr("x", (d, i) => x(i + 1))
+    .attr("width", x.bandwidth())
+    .attr("fill", (d, i) => colorScale(i + 1))
+    .attr("y", y(0))
+    .attr("height", 0)
+    .transition()
+    .duration(800)
+    .attr("y", d => y(d))
+    .attr("height", d => innerHeight - y(d));
+
+  g.append("g")
+    .style("font-family", "Georgia")
+    .attr("transform", `translate(0,${innerHeight})`)
+    .call(d3.axisBottom(x));
+
+  g.append("g")
+    .style("font-family", "Georgia")
+    .call(d3.axisLeft(y).ticks(d3.max(d.freq)));
+
+  svg.append("text")
+    .attr("x", width / 2)
+    .attr("y", 15)
+    .attr("text-anchor", "middle")
+    .text(`Productivity (Day ${d.day}, Hour ${d.hour})`);
 }
 
 // Initialisation
