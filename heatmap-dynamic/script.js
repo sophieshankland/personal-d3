@@ -97,6 +97,18 @@ function createHeatmap({ container, data }) {
     .on("click", (event, d) => {
       createBarChart("#distribution-chart", d.freq, d);
     })
+    // Adding animation for specific day highlighting
+    .transition()
+    .duration(300)
+    // User can choose specific day to highlight for a clearer view of productivity
+    .style("opacity", d => {
+      if (selectedDay === "all") return 1;
+      return d.day === +selectedDay ? 1 : 0.2;
+    })
+    .style("stroke-width", d => {
+      if (selectedDay === "all") return 0.5;
+      return d.day === +selectedDay ? 1.5 : 0.5;
+    });
   }
 
   // Adding axes
@@ -115,6 +127,8 @@ function createHeatmap({ container, data }) {
 
   // The initial render of the heatmap
   update("all");
+
+  return { update };
 }
 
 function createBarChart(container, freq, d) {
@@ -187,5 +201,11 @@ d3.csv("../data/productivity.csv").then(rawData => {
   const heatmap = createHeatmap({
     container: "#heatmap",
     data
+  });
+
+  // User can select a specific day to highlight in heatmap
+  // I put this into place to demonstrate the benefit of using enter/update/exit system becayse it allows dynamic changes like this
+  d3.select("#dayFilter").on("change", function () {
+    heatmap.update(this.value);
   });
 });
