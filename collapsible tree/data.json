@@ -1,0 +1,35 @@
+{
+  "name": "Computer Science",
+  "children": [
+    {
+      "name": "Year 1",
+      "children": [
+        { "name": "Algorithms and Data Structures",
+          "children": [
+              {"name": "Fundamental Data Structures"}, {"name" : "Asymptotic Notation and Sorting"}, {"name" : "Selection and Data Structures"}, {"name" : "Graph Theory"} 
+          ] },
+        { "name": "Computational Thinking",
+          "children": [{"name": "Guest Lectures"}, {"name" : "Introduction to Computation"}, {"name" : "Logic"}
+          ] },
+          { "name": "Computer Systems",
+          "children": [
+              {"name": "Digital Electronics"}, {"name" : "Machine Architecture"}, {"name" : "Databases"}, {"name" : "Operating Systems"} 
+          ] },
+          { "name": "Maths for Computer Science",
+          "children": [
+              {"name": "Calculus"}, {"name" : "Linear Algebra"}
+          ] },
+          { "name": "Programming (Black)",
+          "children": [
+              {"name": "Web Development"}, {"name" : "Project Collaboration"}
+          ] }
+      ]
+    },
+    {
+      "name": "Year 2",
+      "children": [
+        { "name": "Data Science" }
+      ]
+    }
+  ]
+}
